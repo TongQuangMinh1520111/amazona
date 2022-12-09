@@ -1,1 +1,14 @@
 npm install -D tailwindcss postcss autoprefixer
+
+
+//user database
+
+user: amazona
+pass: amazonapassword
+
+//kêt nối đến mongodb. sử dụng mongo compass...
+//install mongo package
+
+npm i mongoose --save
+
+//

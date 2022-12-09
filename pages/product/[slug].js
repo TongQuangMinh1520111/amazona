@@ -8,8 +8,8 @@ import { Store } from "../../utils/Store";
 export default function ProductScreen() {
   const { state, dispatch } = useContext(Store);
   const router = useRouter();
-  const { query } = useRouter();
-  const { slug } = query;
+  // const { query } = useRouter();
+  const { slug } = router.query;
   const product = data.products.find((x) => x.slug === slug);
   if (!product) {
     return <div>Product No Found</div>;
