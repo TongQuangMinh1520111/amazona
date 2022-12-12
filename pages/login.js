@@ -1,14 +1,40 @@
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 import Layout from "../components/Layout";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { getError } from "../utils/error";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 export default function Login() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { redirect } = router.query;
+  useEffect(() => {
+    if (session?.user) {
+      router.push(redirect || "/");
+    }
+  }, [router, session, redirect]);
+
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm();
-  const submitHandler = () => {}
+  const submitHandler = async ({ email, password }) => {
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+      if (result.error) {
+        toast.error(result.error);
+      }
+    } catch (err) {
+      toast.error(getError(err));
+    }
+  };
   return (
     <Layout title="Login">
       <form
@@ -31,7 +57,7 @@ export default function Login() {
             id="email"
             autoFocus
           ></input>
-            {errors.email && (
+          {errors.email && (
             <div className="text-red-500">{errors.email.message}</div>
           )}
         </div>
@@ -47,7 +73,7 @@ export default function Login() {
             id="password"
             autoFocus
           ></input>
-            {errors.password && (
+          {errors.password && (
             <div className="text-red-500 ">{errors.password.message}</div>
           )}
         </div>
