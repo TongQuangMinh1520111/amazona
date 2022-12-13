@@ -17,15 +17,15 @@ const data = {
   ],
   products: [
     {
-      name: "Free Shirt",
+      name: "Free Shirt testttttttt",
       slug: "free-shirt",
       category: "Shirts",
       image: "/images/shirt1.jpg",
       price: 70,
       brand: "Nike",
-      rating: 4.5,
+      rating: 4.8,
       numReviews: 8,
-      countInStock: 20,
+      countInStock: 5,
       description: "A popular shirt",
     },
     {

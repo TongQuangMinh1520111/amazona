@@ -25,7 +25,7 @@ function Auth({ children }) {
   const { status, data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      router.push("/unauthorized?message=login required");
+      router.push('/unauthorized?message=login required');
     },
   });
   if (status === "loading") {

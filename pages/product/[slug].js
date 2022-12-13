@@ -3,24 +3,29 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useContext } from "react";
 import Layout from "../../components/Layout";
-import data from "../../utils/data";
+// import data from "../../utils/data";
+import db from "../../utils/db";
 import { Store } from "../../utils/Store";
-export default function ProductScreen() {
+import Product from "../../models/Product";
+import axios from "axios";
+import { toast } from "react-toastify";
+export default function ProductScreen(props) {
+  const { product } = props;
   const { state, dispatch } = useContext(Store);
   const router = useRouter();
-  // const { query } = useRouter();
-  const { slug } = router.query;
-  const product = data.products.find((x) => x.slug === slug);
+  // const { slug } = router.query;
+  // const product = data.products.find((x) => x.slug === slug);
   if (!product) {
-    return <div>Product No Found</div>;
+    return <div>Product No Found</div>; 
   }
-  const addToCartHandler = () => {
+  const addToCartHandler = async () => {
     const existItem = state.cart.cartItems.find((x) => x.slug === product.slug);
     const quantity = existItem ? existItem.quantity + 1 : 1;
 
-    if (product.countInStock < quantity) {
-      alert("Sorry. Product is out of stock");
-      return;
+    const { data } = await axios.get(`/api/products/${product._id}`);
+
+    if (data.countInStock < quantity) {
+      return toast.error("Sorry. Product is out of stock");
     }
 
     dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
@@ -75,4 +80,20 @@ export default function ProductScreen() {
       </div>
     </Layout>
   );
+}
+
+
+
+export async function getServerSideProps(context) {
+  // const { params } = context;
+  const { slug } = context.params;
+
+  await db.connect();
+  const product = await Product.findOne({ slug }).lean();
+  await db.disconnect();
+  return {
+    props: {
+      product: product ? db.convertDocToObj(product) : null,
+    },
+  };
 }
